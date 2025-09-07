@@ -2,15 +2,16 @@ import styles from './Product.module.scss';
 import ProductImage from './ProductImage/ProductImage.js';
 import ProductForm from './ProductForm/ProductForm.js';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 const Product = ({name, title, basePrice, colors, sizes}) => {
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizes[0].name);
 
-  const activeSizeObj = sizes.find(size => size.name === currentSize);
-  const finalPrice = basePrice + (activeSizeObj?.additionalPrice || 0);
-  console.log('getPrice');
+  const finalPrice = useMemo(() => {
+    const activeSizeObj = sizes.find(size => size.name === currentSize);
+    return basePrice + (activeSizeObj?.additionalPrice || 0);
+  }, [currentSize, basePrice, sizes]);
 
   const addToCart = e => {
     e.preventDefault();
@@ -42,7 +43,7 @@ const Product = ({name, title, basePrice, colors, sizes}) => {
         />  
       </div>
     </article>
-  )
+  );
 };
 
 Product.propTypes = {
@@ -51,6 +52,6 @@ Product.propTypes = {
   basePrice: PropTypes.number.isRequired,
   colors: PropTypes.array.isRequired,
   sizes: PropTypes.array.isRequired
-}
+};
 
 export default Product;
